@@ -1,16 +1,21 @@
 package main
 
 import (
-	"DressedApi/Models"
+	"DressedApi/Services"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type dress = Models.Dress
+type dress = Services.Dress
 
 func main() {
+	db := Services.NewDatabase()
+	ds := Services.NewDressService(&db)
+
+	ds.GetDresses()
+
 	router := gin.Default()
 	router.GET("/dresses", getDresses)
 
