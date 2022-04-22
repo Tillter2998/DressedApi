@@ -1,7 +1,9 @@
 package Services
 
+import c "DressedApi/Config"
+
 type Database struct {
-	// This will be updated to the proper type once the db connection is added
+	// Client will be updated to the proper type once the db connection is added
 	Client     string
 	Name       string
 	User       string
@@ -9,7 +11,7 @@ type Database struct {
 	Password   string
 }
 
-func NewDatabase() Database {
+func NewDatabase(config *c.Configuration) Database {
 	return Database{
 		Client:     "testClient",
 		Name:       "test",
