@@ -1,0 +1,4 @@
+DB_NAME: "{{dbName}}"
+DB_COLLECTION: "{{dbCollection}}"
+DB_USERNAME: "{{dbUserName}}"
+DB_PASSWORD: "{{dbPassword}}"

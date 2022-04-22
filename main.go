@@ -1,6 +1,7 @@
 package main
 
 import (
+	"DressedApi/Config"
 	"DressedApi/Services"
 	"net/http"
 
@@ -11,7 +12,8 @@ import (
 type dress = Services.Dress
 
 func main() {
-	db := Services.NewDatabase()
+	config := Config.NewConfig()
+	db := Services.NewDatabase(config)
 	ds := Services.NewDressService(&db)
 
 	ds.GetDresses()
