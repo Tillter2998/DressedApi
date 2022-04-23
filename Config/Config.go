@@ -14,6 +14,7 @@ type Configuration struct {
 	DB_PASSWORD   string
 }
 
+// Setup config
 func NewConfig() *Configuration {
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
@@ -30,8 +31,6 @@ func NewConfig() *Configuration {
 	if err != nil {
 		fmt.Printf("Unable to decode into struct, %v", err)
 	}
-	fmt.Println("Collection: ", config.DB_COLLECTION)
-	fmt.Println("Documents: ", config.DB_DOCUMENTS)
 
 	return &config
 }
