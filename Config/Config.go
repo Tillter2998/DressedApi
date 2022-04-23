@@ -9,6 +9,7 @@ import (
 type Configuration struct {
 	DB_NAME       string
 	DB_COLLECTION string
+	DB_DOCUMENTS  string
 	DB_USERNAME   string
 	DB_PASSWORD   string
 }
@@ -25,12 +26,12 @@ func NewConfig() *Configuration {
 		fmt.Printf("Error reading config file, %s", err)
 	}
 
-	viper.SetDefault("database.name", "test_db")
-
 	err := viper.Unmarshal(&config)
 	if err != nil {
 		fmt.Printf("Unable to decode into struct, %v", err)
 	}
+	fmt.Println("Collection: ", config.DB_COLLECTION)
+	fmt.Println("Documents: ", config.DB_DOCUMENTS)
 
 	return &config
 }
