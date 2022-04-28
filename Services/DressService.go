@@ -1,6 +1,7 @@
 package Services
 
 import (
+	"fmt"
 	"log"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -61,6 +62,37 @@ func (ds *DressService) AddDress(dress *Dress) (string, error) {
 
 	dress.Id = objID
 
+	errors := validateDress(dress)
+	if len(errors) > 0 {
+		log.Fatal(errors)
+	}
+
+	result, err := ds.db.AddDress(dress)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return result, nil
+}
+
+func (ds *DressService) UpdateDress(dress *Dress) (string, error) {
+
+	errors := validateDress(dress)
+	if len(errors) > 0 {
+		log.Fatal(errors)
+	}
+
+	fmt.Println("Sending update to dbservice")
+	result, err := ds.db.UpdateDress(dress)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return result, nil
+}
+
+func validateDress(dress *Dress) string {
+
 	var errors string
 
 	if dress.Id.IsZero() {
@@ -75,10 +107,5 @@ func (ds *DressService) AddDress(dress *Dress) (string, error) {
 		log.Fatal("Posted Dress has errors: ", errors)
 	}
 
-	result, err := ds.db.AddDress(dress)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return result, nil
+	return errors
 }

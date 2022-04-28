@@ -111,6 +111,29 @@ func (db *Database) AddDress(dress *Dress) (string, error) {
 	return id, nil
 }
 
+func (db *Database) UpdateDress(dress *Dress) (string, error) {
+
+	coll := getCollection(db)
+
+	filter := bson.D{{"_id", dress.Id}}
+	updateData, err := bson.Marshal(dress)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Updating dress with Id: ", dress.Id)
+	result, err := coll.ReplaceOne(db.Context, filter, updateData)
+	if err != nil {
+		log.Fatal("Update failed with error: ", err)
+	}
+
+	fmt.Println("Update successful, Id: ", result.UpsertedID)
+	id := fmt.Sprint(result.UpsertedID)
+	fmt.Println(id)
+
+	return id, nil
+}
+
 func getCollection(db *Database) *mongo.Collection {
 
 	fmt.Println("Getting Collection...")

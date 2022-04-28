@@ -32,7 +32,7 @@ func main() {
 		}
 		c.JSON(http.StatusOK, dress)
 	})
-	router.POST("/dresses/new-dress", func(c *gin.Context) {
+	router.POST("/dresses/", func(c *gin.Context) {
 		var dress Services.Dress
 		body, err := ioutil.ReadAll(c.Request.Body)
 		if err != nil {
@@ -42,6 +42,25 @@ func main() {
 		json.Unmarshal(body, &dress)
 
 		response, err := ds.AddDress(&dress)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		c.JSON(http.StatusOK, response)
+	})
+	router.PUT("/dresses/", func(c *gin.Context) {
+		var dress Services.Dress
+		body, err := ioutil.ReadAll(c.Request.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		json.Unmarshal(body, &dress)
+
+		response, err := ds.UpdateDress(&dress)
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		c.JSON(http.StatusOK, response)
 	})
