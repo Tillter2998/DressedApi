@@ -64,6 +64,14 @@ func main() {
 
 		c.JSON(http.StatusOK, response)
 	})
+	router.DELETE("/dresses/:id", func(c *gin.Context) {
+		response, err := ds.DeleteDress(c.Param("id"))
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		c.JSON(http.StatusOK, response)
+	})
 
 	router.Run("localhost:8080")
 }

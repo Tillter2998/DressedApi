@@ -122,16 +122,29 @@ func (db *Database) UpdateDress(dress *Dress) (string, error) {
 	}
 
 	fmt.Println("Updating dress with Id: ", dress.Id)
-	result, err := coll.ReplaceOne(db.Context, filter, updateData)
+	_, err = coll.ReplaceOne(db.Context, filter, updateData)
 	if err != nil {
 		log.Fatal("Update failed with error: ", err)
 	}
 
-	fmt.Println("Update successful, Id: ", result.UpsertedID)
-	id := fmt.Sprint(result.UpsertedID)
-	fmt.Println(id)
+	fmt.Println("Update successful, Id: ", dress.Id)
+	id := dress.Id.Hex()
 
 	return id, nil
+}
+
+func (db *Database) DeleteDress(id primitive.ObjectID) (string, error) {
+
+	coll := getCollection(db)
+
+	filter := bson.D{{"_id", id}}
+
+	_, err := coll.DeleteOne(db.Context, filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return fmt.Sprintf("Successfully deleted dress with id: %v", id.Hex()), nil
 }
 
 func getCollection(db *Database) *mongo.Collection {

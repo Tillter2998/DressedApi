@@ -91,6 +91,21 @@ func (ds *DressService) UpdateDress(dress *Dress) (string, error) {
 	return result, nil
 }
 
+func (ds *DressService) DeleteDress(id string) (string, error) {
+
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		log.Fatal("Failed with error: ", err)
+	}
+
+	result, err := ds.db.DeleteDress(objID)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return result, nil
+}
+
 func validateDress(dress *Dress) string {
 
 	var errors string
