@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -33,26 +32,95 @@ func NewDressService(database *Database) DressService {
 
 func (ds *DressService) GetDresses() ([]*Dress, error) {
 
-	var dresses []*Dress
-	fmt.Println("Getting Collection...")
-	coll := ds.db.Client.Database(ds.db.Collection).Collection(ds.db.Documents)
-
-	fmt.Println("Getting documents...")
-	cursor, err := coll.Find(ds.db.Context, bson.M{})
+	dresses, err := ds.db.GetDresses()
 	if err != nil {
-		log.Fatal("Getting documents failed with error: ", err)
-	}
-	fmt.Println("Documents successfully retrieved")
-	fmt.Println(cursor.RemainingBatchLength())
-
-	for cursor.Next(ds.db.Context) {
-		var dress *Dress
-		if err = cursor.Decode(&dress); err != nil {
-			log.Fatal("Failed to decode dress with error: ", err)
-		}
-		dresses = append(dresses, dress)
-		fmt.Println(len(dresses))
+		log.Fatal(err)
 	}
 
 	return dresses, nil
+
+}
+
+func (ds *DressService) GetDress(id string) (Dress, error) {
+
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		log.Fatal("Failed with error: ", err)
+	}
+
+	dress, err := ds.db.GetDress(objID)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return dress, nil
+}
+
+func (ds *DressService) AddDress(dress *Dress) (string, error) {
+
+	objID := primitive.NewObjectID()
+
+	dress.Id = objID
+
+	errors := validateDress(dress)
+	if len(errors) > 0 {
+		log.Fatal(errors)
+	}
+
+	result, err := ds.db.AddDress(dress)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return result, nil
+}
+
+func (ds *DressService) UpdateDress(dress *Dress) (string, error) {
+
+	errors := validateDress(dress)
+	if len(errors) > 0 {
+		log.Fatal(errors)
+	}
+
+	fmt.Println("Sending update to dbservice")
+	result, err := ds.db.UpdateDress(dress)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return result, nil
+}
+
+func (ds *DressService) DeleteDress(id string) (string, error) {
+
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		log.Fatal("Failed with error: ", err)
+	}
+
+	result, err := ds.db.DeleteDress(objID)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return result, nil
+}
+
+func validateDress(dress *Dress) string {
+
+	var errors string
+
+	if dress.Id.IsZero() {
+		errors = errors + "\nId cannot be empty"
+	}
+
+	if len(dress.Name) == 0 {
+		errors = errors + "\nName cannot be empty"
+	}
+
+	if len(errors) > 0 {
+		log.Fatal("Posted Dress has errors: ", errors)
+	}
+
+	return errors
 }
