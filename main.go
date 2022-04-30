@@ -18,6 +18,7 @@ func main() {
 	router := gin.Default()
 
 	// TODO: Add 405 Method not allowed handling
+	// TODO: Add Authentication
 
 	router.GET("/dresses", func(c *gin.Context) {
 		dresses, err := ds.GetDresses()
