@@ -34,7 +34,7 @@ func (ds *DressService) GetDresses() ([]*Dress, error) {
 
 	dresses, err := ds.db.GetDresses()
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	return dresses, nil
@@ -50,7 +50,7 @@ func (ds *DressService) GetDress(id string) (Dress, error) {
 
 	dress, err := ds.db.GetDress(objID)
 	if err != nil {
-		log.Fatal(err)
+		return Dress{}, err
 	}
 
 	return dress, nil
@@ -63,13 +63,13 @@ func (ds *DressService) AddDress(dress *Dress) (string, error) {
 	dress.Id = objID
 
 	errors := validateDress(dress)
-	if len(errors) > 0 {
-		log.Fatal(errors)
+	if errors != nil {
+		return "", errors
 	}
 
 	result, err := ds.db.AddDress(dress)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	return result, nil
@@ -78,14 +78,14 @@ func (ds *DressService) AddDress(dress *Dress) (string, error) {
 func (ds *DressService) UpdateDress(dress *Dress) (string, error) {
 
 	errors := validateDress(dress)
-	if len(errors) > 0 {
-		log.Fatal(errors)
+	if errors != nil {
+		return "", errors
 	}
 
 	fmt.Println("Sending update to dbservice")
 	result, err := ds.db.UpdateDress(dress)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	return result, nil
@@ -95,18 +95,18 @@ func (ds *DressService) DeleteDress(id string) (string, error) {
 
 	objID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		log.Fatal("Failed with error: ", err)
+		return "", err
 	}
 
 	result, err := ds.db.DeleteDress(objID)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	return result, nil
 }
 
-func validateDress(dress *Dress) string {
+func validateDress(dress *Dress) error {
 
 	var errors string
 
@@ -119,8 +119,9 @@ func validateDress(dress *Dress) string {
 	}
 
 	if len(errors) > 0 {
-		log.Fatal("Posted Dress has errors: ", errors)
+		return fmt.Errorf("posted dress has errors: %v", errors)
 	}
 
-	return errors
+	return nil
+
 }
