@@ -16,6 +16,7 @@ func main() {
 	ds := Services.NewDressService(&db)
 
 	router := gin.Default()
+	router.HandleMethodNotAllowed = true
 
 	// TODO: Add Authentication
 
