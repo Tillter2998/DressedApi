@@ -5,7 +5,6 @@ import (
 	"DressedApi/Services"
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,61 +16,75 @@ func main() {
 	ds := Services.NewDressService(&db)
 
 	router := gin.Default()
+	router.HandleMethodNotAllowed = true
 
-	router.GET("/dresses", func(c *gin.Context) {
+	// Unsure if my approach to handling authentication is the best.
+	// It might have to change down the line as I develop the front end
+
+	// This will be changed to not be a hard coded user/pass
+	auth := router.Group("/", gin.BasicAuth(gin.Accounts{
+		"testUser": "testPass",
+	}))
+
+	auth.GET("/dresses", func(c *gin.Context) {
 		dresses, err := ds.GetDresses()
 		if err != nil {
-			log.Fatal(err)
+			c.JSON(500, err)
 		}
 		c.JSON(http.StatusOK, dresses)
 	})
-	router.GET("/dresses/:id", func(c *gin.Context) {
+	auth.GET("/dresses/:id", func(c *gin.Context) {
 		dress, err := ds.GetDress(c.Param("id"))
 		if err != nil {
-			log.Fatal(err)
+			c.JSON(404, err)
 		}
 		c.JSON(http.StatusOK, dress)
 	})
-	router.POST("/dresses/", func(c *gin.Context) {
+	auth.POST("/dresses/", func(c *gin.Context) {
 		var dress Services.Dress
 		body, err := ioutil.ReadAll(c.Request.Body)
 		if err != nil {
-			log.Fatal(err)
+			c.JSON(400, err)
 		}
 
 		json.Unmarshal(body, &dress)
 
 		response, err := ds.AddDress(&dress)
 		if err != nil {
-			log.Fatal(err)
+			c.JSON(500, err)
 		}
 
 		c.JSON(http.StatusOK, response)
 	})
-	router.PUT("/dresses/", func(c *gin.Context) {
+	auth.PUT("/dresses/", func(c *gin.Context) {
 		var dress Services.Dress
 		body, err := ioutil.ReadAll(c.Request.Body)
 		if err != nil {
-			log.Fatal(err)
+			c.JSON(400, err)
 		}
 
 		json.Unmarshal(body, &dress)
 
 		response, err := ds.UpdateDress(&dress)
 		if err != nil {
-			log.Fatal(err)
+			c.JSON(500, err)
 		}
 
 		c.JSON(http.StatusOK, response)
 	})
-	router.DELETE("/dresses/:id", func(c *gin.Context) {
+	auth.DELETE("/dresses/:id", func(c *gin.Context) {
 		response, err := ds.DeleteDress(c.Param("id"))
 		if err != nil {
-			log.Fatal(err)
+			c.JSON(404, err)
 		}
 
 		c.JSON(http.StatusOK, response)
 	})
 
-	router.Run("localhost:8080")
+	//Unsure if this is the best way to handle HTTP/HTTPS, may change as development continues
+	if config.ENVIRONMENT == "DEV" {
+		router.Run("localhost:8080")
+	} else {
+		router.RunTLS(":8080", config.CERTFILE_LOCATION, config.KEYFILE_LOCATION)
+	}
 }

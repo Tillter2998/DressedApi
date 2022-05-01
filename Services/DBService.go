@@ -46,7 +46,7 @@ func NewDatabase(config *c.Configuration) Database {
 
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Unable to create database connection: ", err)
 	}
 	fmt.Println("Connected to db successfully")
 
@@ -67,14 +67,14 @@ func (db *Database) GetDresses() ([]*Dress, error) {
 	fmt.Println("Getting documents...")
 	cursor, err := coll.Find(db.Context, bson.M{})
 	if err != nil {
-		log.Fatal("Getting documents failed with error: ", err)
+		return nil, err
 	}
 	fmt.Println("Documents successfully retrieved")
 
 	for cursor.Next(db.Context) {
 		var dress *Dress
 		if err = cursor.Decode(&dress); err != nil {
-			log.Fatal("Failed to decode dress with error: ", err)
+			return nil, err
 		}
 		dresses = append(dresses, dress)
 	}
@@ -91,7 +91,7 @@ func (db *Database) GetDress(id primitive.ObjectID) (Dress, error) {
 	fmt.Println("Getting dress with id: ", id)
 	result := coll.FindOne(db.Context, bson.M{"_id": id})
 	if err := result.Decode(&dress); err != nil {
-		log.Fatal("Failed to decode dress with error: ", err)
+		return Dress{}, err
 	}
 	return dress, nil
 }
@@ -103,7 +103,7 @@ func (db *Database) AddDress(dress *Dress) (string, error) {
 	fmt.Println("Adding dress with Id: ", dress.Id)
 	result, err := coll.InsertOne(db.Context, dress)
 	if err != nil {
-		log.Fatal("failed inserting with error: ", err)
+		return "", err
 	}
 
 	id := result.InsertedID.(primitive.ObjectID).Hex()
@@ -118,13 +118,13 @@ func (db *Database) UpdateDress(dress *Dress) (string, error) {
 	filter := bson.D{{"_id", dress.Id}}
 	updateData, err := bson.Marshal(dress)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	fmt.Println("Updating dress with Id: ", dress.Id)
 	_, err = coll.ReplaceOne(db.Context, filter, updateData)
 	if err != nil {
-		log.Fatal("Update failed with error: ", err)
+		return "", err
 	}
 
 	fmt.Println("Update successful, Id: ", dress.Id)
@@ -141,7 +141,7 @@ func (db *Database) DeleteDress(id primitive.ObjectID) (string, error) {
 
 	_, err := coll.DeleteOne(db.Context, filter)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	return fmt.Sprintf("Successfully deleted dress with id: %v", id.Hex()), nil
