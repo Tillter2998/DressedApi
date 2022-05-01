@@ -6,3 +6,8 @@ DB_COLLECTION: "{{dbCollection}}"
 DB_DOCUMENTS: "{{dbDocuments}}"
 DB_USERNAME: "{{dbUserName}}"
 DB_PASSWORD: "{{dbPassword}}"
+
+#Not sure if there is a better way to get these values
+ENVIRONMENT: "{{workingEnvironment}}"
+CERTFILE_LOCATION: "{{certFile}}"
+KEYFILE_LOCATION:  "{{keyFile}}"

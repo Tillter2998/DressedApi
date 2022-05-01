@@ -7,11 +7,14 @@ import (
 )
 
 type Configuration struct {
-	DB_NAME       string
-	DB_COLLECTION string
-	DB_DOCUMENTS  string
-	DB_USERNAME   string
-	DB_PASSWORD   string
+	DB_NAME           string
+	DB_COLLECTION     string
+	DB_DOCUMENTS      string
+	DB_USERNAME       string
+	DB_PASSWORD       string
+	ENVIRONMENT       string
+	CERTFILE_LOCATION string
+	KEYFILE_LOCATION  string
 }
 
 // Setup config
