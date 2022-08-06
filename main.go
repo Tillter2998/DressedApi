@@ -81,10 +81,11 @@ func main() {
 		c.JSON(http.StatusOK, response)
 	})
 
+	router.Run(":8080")
 	//Unsure if this is the best way to handle HTTP/HTTPS, may change as development continues
-	if config.ENVIRONMENT == "DEV" {
-		router.Run("localhost:8080")
-	} else {
-		router.RunTLS(":8080", config.CERTFILE_LOCATION, config.KEYFILE_LOCATION)
-	}
+	// if config.ENVIRONMENT == "DEV" {
+	// 	router.Run("localhost:8080")
+	// } else {
+	// 	router.RunTLS(":8080", config.CERTFILE_LOCATION, config.KEYFILE_LOCATION)
+	// }
 }

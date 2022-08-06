@@ -1,0 +1,10 @@
+{
+    "DB_NAME": "{{dbName}}",
+    "DB_COLLECTION": "{{dbCollection}}",
+    "DB_DOCUMENTS": "{{dbDocuments}}",
+    "DB_USERNAME": "{{dbUserName}}",
+    "DB_PASSWORD": "{{dbPassword}}",
+    "ENVIRONMENT": "{{workingEnvironment}}",
+    "CERTFILE_LOCATION": "{{certFile}}",
+    "KEYFILE_LOCATION": "{{keyFile}}"
+}

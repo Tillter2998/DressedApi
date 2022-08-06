@@ -22,7 +22,7 @@ func NewConfig() *Configuration {
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
 	viper.AutomaticEnv()
-	viper.SetConfigType("yml")
+	viper.SetConfigType("json")
 
 	var config Configuration
 
