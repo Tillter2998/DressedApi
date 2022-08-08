@@ -9,10 +9,7 @@ COPY go.sum ./
 
 RUN go mod download
 
-COPY *.go ./
-COPY Config/ ./
-COPY Services/ ./
-COPY config.yml ./
+COPY . ./
 
 RUN go build -o /DressedApi
 
